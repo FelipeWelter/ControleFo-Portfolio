@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Usuários{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Usuários</h2>
+
+    <a href="{{ url_for('fo.admin_usuario_novo') }}"
+       class="btn btn-primary">
+        Novo Usuário
+    </a>
+</div>
+
+<div class="card card-glass p-4">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Usuário</th>
+                <th>Militar Vinculado</th>
+                <th>Permissões</th>
+                <th>Escopo</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.username }}</td>
+                <td>
+                    {% if usuario.militar %}
+                        {{ usuario.militar.posto_graduacao.nome }}
+                        {{ usuario.militar.nome_guerra }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% set permissoes = usuario.permissoes.split(',') if usuario.permissoes else [] %}
+
+{% for permissao in permissoes %}
+    {% if permissao == "USUARIO" %}
+        <span class="badge bg-secondary">Usuário</span>
+    {% elif permissao == "LANCADOR" %}
+        <span class="badge bg-success">Lançador</span>
+    {% elif permissao == "CADASTRADOR" %}
+        <span class="badge bg-primary">Cadastrador</span>
+    {% elif permissao == "BOLETIM" %}
+        <span class="badge bg-info">Boletim</span>
+    {% elif permissao == "HOMOLOGADOR" %}
+        <span class="badge bg-warning text-dark">Homologador</span>
+    {% elif permissao == "ADMIN" %}
+        <span class="badge bg-dark">Administrador</span>
+    {% endif %}
+{% endfor %}
+                </td>
+                <td>
+                    {% if usuario.nivel_acesso == 'BRIGADA' %}
+                        <span class="badge bg-dark">Brigada/Geral</span>
+                    {% elif usuario.nivel_acesso == 'COMPANHIA' %}
+                        <span class="badge bg-primary">Companhia</span>
+                        <div class="small text-muted">
+                            {{ usuario.companhia.nome if usuario.companhia else (usuario.militar.companhia.nome if usuario.militar and usuario.militar.companhia else 'sem companhia') }}
+                        </div>
+                    {% else %}
+                        <span class="badge bg-secondary">Seção/Pelotão</span>
+                        <div class="small text-muted">
+                            {{ usuario.secao_escopo.nome if usuario.secao_escopo else (usuario.militar.secao.nome if usuario.militar and usuario.militar.secao else 'sem seção') }}
+                        </div>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('fo.admin_usuario_editar', usuario_id=usuario.id) }}"
+                        class="btn btn-sm btn-warning">
+                        Editar
+                        </a>
+                        {% if usuario.militar %}
+                        <form method="POST"
+                            action="{{ url_for('fo.admin_usuario_resetar_senha', usuario_id=usuario.id) }}"
+                            onsubmit="return confirm('Resetar a senha deste usuário para a identidade militar?');">
+
+                            <button class="btn btn-sm btn-secondary">
+                                Resetar Senha
+                            </button>
+
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

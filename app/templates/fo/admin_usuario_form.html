@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Usuário{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    {% if usuario %}Editar Usuário{% else %}Novo Usuário{% endif %}
+</h2>
+
+<div class="card card-glass p-4">
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label class="form-label">Nome de Usuário</label>
+            <input type="text"
+                   name="username"
+                   class="form-control"
+                   value="{{ usuario.username if usuario else '' }}"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Senha
+                {% if usuario %}
+                    <small class="text-muted">(deixe em branco para manter)</small>
+                {% endif %}
+            </label>
+
+            <input type="password"
+                   name="senha"
+                   class="form-control"
+                   {% if not usuario %}required{% endif %}>
+        </div>
+
+<div class="mb-3">
+    <label class="form-label">Perfis atribuídos</label>
+
+    {% set permissoes_usuario = usuario.permissoes.split(',') if usuario and usuario.permissoes else [] %}
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="USUARIO"
+                       id="permUsuario"
+                       {% if not usuario or "USUARIO" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permUsuario">
+                    👤 Usuário - Consulta pessoal
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="LANCADOR"
+                       id="permLancador"
+                       {% if "LANCADOR" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permLancador">
+                    📝 Lançador - Lançamento de FO
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="CADASTRADOR"
+                       id="permCadastrador"
+                       {% if "CADASTRADOR" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permCadastrador">
+                    📋 Cadastrador - Cadastro de militares
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="BOLETIM"
+                       id="permBoletim"
+                       {% if "BOLETIM" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permBoletim">
+                    📰 Boletim - Exportação BI
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="HOMOLOGADOR"
+                       id="permHomologador"
+                       {% if "HOMOLOGADOR" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permHomologador">
+                    ✔️ Homologador - Aprovação de FO
+                </label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="permissoes"
+                       value="ADMIN"
+                       id="permAdmin"
+                       {% if "ADMIN" in permissoes_usuario %}checked{% endif %}>
+
+                <label class="form-check-label" for="permAdmin">
+                    ⚙️ Administrador - Acesso total
+                </label>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+        <div class="card border-0 bg-light p-3 mb-4">
+            <h5 class="mb-3">Nível de Acesso Territorial</h5>
+            <p class="text-muted small mb-3">
+                Define quais militares este usuário poderá visualizar, homologar e gerenciar.
+                Administradores continuam com acesso total.
+            </p>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nível</label>
+                    <select name="nivel_acesso" class="form-select">
+                        {% set nivel_atual = usuario.nivel_acesso if usuario and usuario.nivel_acesso else 'SECAO' %}
+                        <option value="BRIGADA" {% if nivel_atual == 'BRIGADA' %}selected{% endif %}>Brigada / Geral</option>
+                        <option value="COMPANHIA" {% if nivel_atual == 'COMPANHIA' %}selected{% endif %}>Companhia</option>
+                        <option value="SECAO" {% if nivel_atual == 'SECAO' %}selected{% endif %}>Seção / Pelotão</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Companhia</label>
+                    <select name="companhia_id" class="form-select">
+                        <option value="">Usar a companhia do militar vinculado</option>
+                        {% for companhia in companhias %}
+                        <option value="{{ companhia.id }}"
+                            {% if usuario and usuario.companhia_id == companhia.id %}selected{% endif %}>
+                            {{ companhia.nome }}{% if companhia.sigla %} - {{ companhia.sigla }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Seção/Pelotão</label>
+                    <select name="secao_id" class="form-select">
+                        <option value="">Usar a seção do militar vinculado</option>
+                        {% for secao in secoes %}
+                        <option value="{{ secao.id }}"
+                            {% if usuario and usuario.secao_id == secao.id %}selected{% endif %}>
+                            {{ secao.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mb-4">
+            <label class="form-label">Militar Vinculado</label>
+
+            <select name="militar_id"
+                    class="form-select">
+
+                <option value="">Nenhum</option>
+
+                {% for militar in militares %}
+                    <option value="{{ militar.id }}"
+                        {% if usuario and usuario.militar_id == militar.id %}selected{% endif %}>
+                        {{ militar.posto_graduacao.nome }} {{ militar.nome_guerra }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <button class="btn btn-success">
+            Salvar
+        </button>
+
+        <a href="{{ url_for('fo.admin_usuarios') }}"
+           class="btn btn-secondary">
+            Voltar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
