@@ -1,38 +1,25 @@
 {% extends "base.html" %}
-
-{% block title %}Login{% endblock %}
-
+{% block title %}Entrar · Sistema FO{% endblock %}
 {% block content %}
-
-<div class="row justify-content-center w-100">
-    <div class="col-md-4 col-lg-3">
-
-        <div class="card login-card p-4">
-
-            <h3 class="mb-4 text-center">Sistema FO</h3>
-
-            <form method="POST">
-
-                <div class="mb-3">
-                    <label class="form-label">Usuário</label>
-                    <input type="text" class="form-control" name="username" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Senha</label>
-                    <input type="password" class="form-control" name="senha" required>
-                </div>
-                <button class="btn btn-primary w-100">
-                    Entrar
-                </button>
-            </form>
-
-            <div class="text-center mt-3">
-                <a href="{{ url_for('auth.esqueci_senha') }}" class="small text-decoration-none">
-                    Esqueci minha senha
-                </a>
+<div class="fo-login">
+    <section class="fo-login-intro" aria-labelledby="titulo-sistema">
+        <h1 id="titulo-sistema">Sistema FO</h1>
+        <p>Registro, homologação e consulta de Fatos Observados.</p>
+    </section>
+    <section class="fo-login-form" aria-labelledby="titulo-login">
+        <h2 id="titulo-login" class="mb-4">Acesse sua conta</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label" for="username">Usuário</label>
+                <input id="username" type="text" class="form-control" name="username" autocomplete="username" required>
             </div>
-        </div>
-    </div>
+            <div class="mb-3">
+                <label class="form-label" for="senha">Senha</label>
+                <input id="senha" type="password" class="form-control" name="senha" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+        <a href="{{ url_for('auth.esqueci_senha') }}" class="d-inline-block mt-3">Esqueci minha senha</a>
+    </section>
 </div>
-
 {% endblock %}

@@ -7,162 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        {% block title %}Meu Site{% endblock %}
+        {% block title %}Sistema FO{% endblock %}
     </title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-    body {
-        min-height: 100vh;
-        background: #f4f6f9;
-    }
-
-    body.app-page {
-        background:
-            linear-gradient(rgba(244, 246, 249, 0.90), rgba(244, 246, 249, 0.90)),
-            url("{{ url_for('static', filename='img/login-bg.svg') }}") center center / cover fixed no-repeat;
-    }
-
-    body.login-page {
-        background:
-            linear-gradient(rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.35)),
-            url("{{ url_for('static', filename='img/login-bg.svg') }}") center center / cover fixed no-repeat;
-    }
-
-    .login-page main.container {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .login-card {
-        background: rgba(255, 255, 255, 0.94);
-        backdrop-filter: blur(6px);
-        border-radius: 18px;
-        box-shadow: 0 10px 35px rgba(0,0,0,0.28);
-    }
-
-    .navbar-custom {
-        background: linear-gradient(90deg, #1b4332, #2d6a4f);
-    }
-
-    .navbar-custom .navbar-brand {
-        color: #ffffff !important;
-        font-size: 1.05rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .navbar-custom .nav-link {
-        color: rgba(255,255,255,0.92) !important;
-        font-size: 0.92rem;
-        padding: 0.55rem 0.7rem;
-        border-radius: 8px;
-        white-space: nowrap;
-    }
-
-    .navbar-custom .nav-link:hover {
-        background: rgba(255,255,255,0.12);
-        color: #ffffff !important;
-    }
-
-    .navbar-custom .navbar-text {
-        color: rgba(255,255,255,0.8) !important;
-        white-space: nowrap;
-    }
-
-    .navbar-custom .btn {
-        white-space: nowrap;
-    }
-
-    .card-glass {
-        border-radius: 16px;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        background: rgba(255, 255, 255, 0.94);
-    }
-
-    .positivo {
-        border-left: 6px solid #198754;
-    }
-
-    .negativo {
-        border-left: 6px solid #dc3545;
-    }
-
-    .system-footer {
-        font-size: 0.78rem;
-        color: rgba(0, 0, 0, 0.58);
-        text-align: center;
-        padding: 18px 10px 12px;
-    }
-
-    .login-page .system-footer {
-        color: rgba(255, 255, 255, 0.88);
-        text-shadow: 0 1px 2px rgba(0,0,0,0.45);
-    }
-
-    @media (max-width: 991px) {
-        .navbar-custom .nav-link {
-            padding: 0.75rem 0;
-            border-radius: 0;
-            border-bottom: 1px solid rgba(255,255,255,0.12);
-        }
-
-        .navbar-custom .navbar-text {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        body {
-            font-size: 0.95rem;
-        }
-
-        .container {
-            padding-left: 12px;
-            padding-right: 12px;
-        }
-
-        .card-glass {
-            border-radius: 12px;
-            padding: 1rem !important;
-        }
-
-        .table {
-            font-size: 0.85rem;
-        }
-
-        .table th,
-        .table td {
-            white-space: nowrap;
-        }
-
-        .btn {
-            margin-bottom: 4px;
-        }
-
-        .d-flex.gap-2 {
-            flex-wrap: wrap;
-        }
-
-        h2 {
-            font-size: 1.4rem;
-        }
-
-        h3 {
-            font-size: 1.2rem;
-        }
-    }
-</style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fo-interface.css') }}">
 
     {% block extra_head %}{% endblock %}
 
 </head>
-<body class="{% if request.endpoint == 'auth.login' %}login-page{% else %}app-page{% endif %}">
+<body class="{% if request.endpoint == 'auth.login' %}login-page{% else %}app-page{% if current_user.is_authenticated %} fo-shell{% endif %}{% endif %}">
+<a class="fo-skip" href="#conteudo">Ir para o conteúdo</a>
 
 {% if request.endpoint != 'auth.login' %}
 
@@ -172,7 +28,7 @@
 
         <a class="navbar-brand fw-semibold me-4"
            href="{{ url_for('index') }}">
-            Sistema FO
+            <span class="fo-brand-mark" aria-hidden="true">FO</span>Sistema FO
         </a>
 
         <button class="navbar-toggler"
@@ -195,14 +51,14 @@
             <ul class="navbar-nav me-auto align-items-lg-center gap-lg-1">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.dashboard') }}">
+                    <a class="nav-link" href="{{ url_for('fo.dashboard') }}"{% if request.endpoint == 'fo.dashboard' %} aria-current="page"{% endif %}>
                         Página Inicial
                     </a>
                 </li>
 
                 {% if usuario_tem_historico_pessoal(current_user) and ("USUARIO" in current_user.permissoes or "LANCADOR" in current_user.permissoes or "ADMIN" in current_user.permissoes) %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.meu_historico') }}">
+                    <a class="nav-link" href="{{ url_for('fo.meu_historico') }}"{% if request.endpoint == 'fo.meu_historico' %} aria-current="page"{% endif %}>
                         Meu Histórico
                     </a>
                 </li>
@@ -210,7 +66,7 @@
 
                 {% if "LANCADOR" in current_user.permissoes or "HOMOLOGADOR" in current_user.permissoes or "ADMIN" in current_user.permissoes %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.novo_fo') }}">
+                    <a class="nav-link" href="{{ url_for('fo.novo_fo') }}"{% if request.endpoint == 'fo.novo_fo' %} aria-current="page"{% endif %}>
                         Lançar FO
                     </a>
                 </li>
@@ -218,7 +74,7 @@
 
                 {% if "HOMOLOGADOR" in current_user.permissoes or "ADMIN" in current_user.permissoes     %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.homologacao') }}">
+                    <a class="nav-link" href="{{ url_for('fo.homologacao') }}"{% if request.endpoint == 'fo.homologacao' %} aria-current="page"{% endif %}>
                         Homologação
                     </a>
                 </li>
@@ -226,19 +82,19 @@
 
                 {% if tem_acesso_oficial(current_user) %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.ranking') }}">
+                    <a class="nav-link" href="{{ url_for('fo.ranking') }}"{% if request.endpoint == 'fo.ranking' %} aria-current="page"{% endif %}>
                         Painel de Conceitos
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.historico_geral') }}">
+                    <a class="nav-link" href="{{ url_for('fo.historico_geral') }}"{% if request.endpoint == 'fo.historico_geral' %} aria-current="page"{% endif %}>
                         Histórico Geral
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.dispensas') }}">
+                    <a class="nav-link" href="{{ url_for('fo.dispensas') }}"{% if request.endpoint == 'fo.dispensas' %} aria-current="page"{% endif %}>
                         Dispensas
                     </a>
                 </li>
@@ -246,7 +102,7 @@
 
                 {% if "BOLETIM" in current_user.permissoes or "ADMIN" in current_user.permissoes %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.exportacao') }}">
+                    <a class="nav-link" href="{{ url_for('fo.exportacao') }}"{% if request.endpoint == 'fo.exportacao' %} aria-current="page"{% endif %}>
                         Exportação BI
                     </a>
                 </li>
@@ -254,7 +110,7 @@
 
                 {% if "CADASTRADOR" in current_user.permissoes or "ADMIN" in current_user.permissoes %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.admin_militares') }}">
+                    <a class="nav-link" href="{{ url_for('fo.admin_militares') }}"{% if request.endpoint == 'fo.admin_militares' %} aria-current="page"{% endif %}>
                         Militares
                     </a>
                 </li>
@@ -262,31 +118,31 @@
 
                 {% if "ADMIN" in current_user.permissoes %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.admin_tipos') }}">
+                    <a class="nav-link" href="{{ url_for('fo.admin_tipos') }}"{% if request.endpoint == 'fo.admin_tipos' %} aria-current="page"{% endif %}>
                         Tipos
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.admin_companhias') }}">
+                    <a class="nav-link" href="{{ url_for('fo.admin_companhias') }}"{% if request.endpoint == 'fo.admin_companhias' %} aria-current="page"{% endif %}>
                         Companhias
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.admin_usuarios') }}">
+                    <a class="nav-link" href="{{ url_for('fo.admin_usuarios') }}"{% if request.endpoint == 'fo.admin_usuarios' %} aria-current="page"{% endif %}>
                         Usuários
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.admin_solicitacoes_senha') }}">
+                    <a class="nav-link" href="{{ url_for('auth.admin_solicitacoes_senha') }}"{% if request.endpoint == 'auth.admin_solicitacoes_senha' %} aria-current="page"{% endif %}>
                         Solicitações de Senha
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('fo.admin_auditoria') }}">
+                    <a class="nav-link" href="{{ url_for('fo.admin_auditoria') }}"{% if request.endpoint == 'fo.admin_auditoria' %} aria-current="page"{% endif %}>
                         Auditoria
                     </a>
                 </li>
@@ -294,7 +150,7 @@
 
             </ul>
 
-            <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+            <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 fo-account">
 
                 <span class="navbar-text small text-white-50 d-none d-xl-inline">
                     {{ current_user.username }}
@@ -366,7 +222,7 @@
 
 </div>
 
-<main class="container">
+<main class="container fo-main" id="conteudo">
     {% block content %}{% endblock %}
 </main>
 

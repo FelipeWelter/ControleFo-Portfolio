@@ -4,12 +4,12 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="fo-hero mb-4">
 
     <div>
-        <h2 class="mb-1">Página Inicial</h2>
+        <h1 class="mb-2">Painel de Fatos Observados</h1>
 
-        <p class="mb-2 text-muted">
+        <p class="mb-3">
             Bem-vindo,
             {% if current_user.militar %}
                 {{ current_user.militar.posto_graduacao.nome }} {{ current_user.militar.nome_guerra }}
@@ -18,7 +18,7 @@
             {% endif %}
         </p>
 
-        <div class="card border-0 bg-light p-3 mt-2">
+        <div class="fo-roles mt-3">
             <h6 class="mb-2">Perfis atribuídos</h6>
             <div class="d-flex flex-wrap gap-3 small">
                 {% set permissoes = current_user.permissoes.split(',') if current_user.permissoes else [] %}
@@ -39,28 +39,28 @@
     {% if "ADMIN" in current_user.permissoes or "HOMOLOGADOR" in current_user.permissoes %}
 
     <div class="col-md-3">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>Militares</h6>
             <h3>{{ total_militares }}</h3>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>FOs Positivos</h6>
             <h3 class="text-success">{{ total_positivos }}</h3>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>Pendentes</h6>
             <h3 class="text-warning">{{ pendentes }}</h3>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>FOs Negativos</h6>
             <h3 class="text-danger">{{ total_negativos }}</h3>
         </div>
@@ -71,7 +71,7 @@
     {% if "BOLETIM" in current_user.permissoes or "ADMIN" in current_user.permissoes %}
 
     <div class="col-md-6">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>FOs Publicados</h6>
             <h3>{{ publicados }}</h3>
         </div>
@@ -91,7 +91,7 @@
     {% if usuario_tem_historico_pessoal(current_user) and ("USUARIO" in current_user.permissoes or "LANCADOR" in current_user.permissoes) %}
 
     <div class="col-md-4">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
 
             <h6>Meu Saldo</h6>
 
@@ -118,7 +118,7 @@
     {% if "CADASTRADOR" in current_user.permissoes %}
 
     <div class="col-md-6">
-        <div class="card card-glass p-3">
+        <div class="card card-glass p-3 fo-metric">
             <h6>Militares</h6>
             <h3>{{ total_militares }}</h3>
         </div>
